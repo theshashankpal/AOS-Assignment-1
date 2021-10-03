@@ -85,28 +85,39 @@ int main(int argc, char *argv[])
         kill(arrayPID[i], SIGCONT);
     }
 
-    printf("~~~~~INORDER PRINTING GOING TO START~~~~~\n");
+    printf(CYN "~~~~~INORDER PRINTING GOING TO START~~~~~\n"RESET);
+    fflush(stdout);
 
     for (size_t i = 0; i < count - 1; i++)
     {
 
+        siginfo_t sig1;
+        waitid(P_PID, arrayPID[i], &sig1, WSTOPPED);
+
+        kill(arrayPID[i], SIGCONT);
+
         siginfo_t sig;
         waitid(P_PID, arrayPID[i], &sig, WEXITED);
         int status = sig.si_status;
-
-        printf("PID : %d and Parent PID : %d\n", arrayPID[i], getpid());
-        printf("Exit status received from child no. %ld : %d\n", i + 1, status);
+        printf("Exit status received from child no. : %ld whose PID : %d is : %d\n", i + 1,arrayPID[i], status);
+        
     }
 
-    printf("Root pid : %d and Parent PID :%d\n", getpid(), getppid());
+    printf(RED "Root node pid : %d and Parent PID : %d\n" RESET, getpid(), getppid());
+    fflush(stdout);
+
+    siginfo_t sig1;
+    waitid(P_PID, arrayPID[count-1], &sig1, WSTOPPED);
+
+    kill(arrayPID[count-1], SIGCONT);
 
     siginfo_t sig;
-    waitid(P_PID, arrayPID[count - 1], &sig, WEXITED);
+    waitid(P_PID, arrayPID[count-1], &sig, WEXITED);
     int status = sig.si_status;
-    printf("PID : %d and Parent PID : %d\n", arrayPID[count - 1], getpid());
-    printf("Exit status received from child no. %d : %d\n", count, status);
+    printf("Exit status received from child no. : %d whose PID : %d is : %d\n", count,arrayPID[count-1], status);
 
-    printf("~~~~~INORDER PRINTING ENDED~~~~~\n");
+    printf(CYN"~~~~~~~~~~INORDER PRINTING ENDED~~~~~~~~~~\n"RESET);
+    fflush(stdout);
 
     while (wait(NULL) != -1)
         ;

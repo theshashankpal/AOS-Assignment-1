@@ -1,6 +1,5 @@
 #include "project.h"
 
-
 int childCreation(int, int, pid_t[], char *[]);
 void inorder(pid_t[], int, int);
 
@@ -52,8 +51,13 @@ int main(int argc, char *argv[])
     }
     else
     {
+        kill(getpid(), SIGSTOP);
+        printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
+        fflush(stdout);
         exit(0);
     }
+
+    kill(getpid(), SIGSTOP);
 
     inorder(arrayPID, count, level);
 
@@ -147,19 +151,27 @@ void inorder(pid_t arrayPID[], int count, int level)
     for (size_t i = 0; i < count - 1; i++)
     {
 
+        siginfo_t sig1;
+        waitid(P_PID, arrayPID[i], &sig1, WSTOPPED);
+
+        kill(arrayPID[i], SIGCONT);
+
         siginfo_t sig;
         waitid(P_PID, arrayPID[i], &sig, WEXITED);
         int status = sig.si_status;
-
-        printf("PID : %d and Parent PID : %d\n", arrayPID[i], getpid());
-        printf("Exit status received from child no. %ld : %d\n", i + 1, status);
+        printf("Exit status received from child no. : %ld whose PID : %d is : %d\n", i + 1,arrayPID[i], status);
     }
 
-    printf("Internal node pid : %d and Parent PID : %d\n", getpid(), getppid());
+    printf(MAG "Internal node pid : %d and Parent PID : %d\n" RESET , getpid(), getppid());
+    fflush(stdout);
+
+    siginfo_t sig1;
+    waitid(P_PID, arrayPID[count-1], &sig1, WSTOPPED);
+
+    kill(arrayPID[count-1], SIGCONT);
 
     siginfo_t sig;
-    waitid(P_PID, arrayPID[count - 1], &sig, WEXITED);
+    waitid(P_PID, arrayPID[count-1], &sig, WEXITED);
     int status = sig.si_status;
-    printf("PID : %d and Parent PID : %d\n", arrayPID[count - 1], getpid());
-    printf("Exit status received from child no. %d : %d\n", count, status);
+    printf("Exit status received from child no. : %d whose PID : %d is : %d\n", count,arrayPID[count-1], status);
 }
