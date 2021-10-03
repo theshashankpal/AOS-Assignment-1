@@ -8,28 +8,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <sys/syscall.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <wait.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <string.h>
-#include <sys/syscall.h>
-#include <sys/wait.h>
-#include <sys/msg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <mqueue.h>
-#include <fcntl.h>
 #include <semaphore.h>
-#include <limits.h>
-#include <errno.h>
 
-
-#define SHARED_MEMORY_NAME "/AVSSHSAEEEESD"
-#define MESSAGE_QUEUE_NAME "/SGAERESASD"
+#define SHARED_MEMORY_NAME "/SYSSHAREDMEMORY"
 
 struct message_buffer
 {
@@ -49,7 +30,6 @@ struct shared_memory_structure
 struct shared_memory_structure *ptr;
 int shm_fd;
 int count = 0;
-mqd_t mqd;
 sem_t *sem;
 
 

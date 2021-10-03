@@ -1,5 +1,9 @@
 #include "project.h"
 
+#include <sys/mman.h> /*Prot_READ*/
+#include <mqueue.h> /* "O_CREAT" O_Constants*/
+#include <wait.h> /* SIGCONT , SIGSTOP*/
+
 int main(int argc, char *argv[])
 {
 

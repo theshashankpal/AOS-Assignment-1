@@ -1,4 +1,11 @@
+
+
 #include "project.h"
+
+#include <sys/mman.h> /*Prot_READ*/
+#include <mqueue.h> /* "O_CREAT" O_Constants*/
+
+
 
 int main(int argc, char *argv[])
 {
@@ -65,8 +72,4 @@ int main(int argc, char *argv[])
 
     // Destroying semaphore.
     sem_destroy(sem);
-
-
-    // Closing the file descriptor of message queue.
-    mq_close(mqd);
 }

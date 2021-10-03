@@ -1,5 +1,9 @@
 #include "project.h"
 
+#include <sys/mman.h> /*Prot_READ*/
+#include <mqueue.h> /* "O_CREAT" O_Constants*/
+#include <wait.h> /* SIGCONT , SIGSTOP*/
+
 int childCreation(int, int, pid_t[], char *[]);
 void inorder(pid_t[], int, int);
 
