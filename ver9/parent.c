@@ -1,9 +1,5 @@
 #include "project.h"
 
-#include <sys/mman.h> /*Prot_READ*/
-#include <mqueue.h> /* "O_CREAT" O_Constants*/
-#include <wait.h> /* SIGCONT , SIGSTOP*/
-
 int main(int argc, char *argv[])
 {
 
@@ -26,7 +22,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
     // Taking all the argument values;
     int even = atoi(argv[1]);
     int odd = atoi(argv[2]);
@@ -38,7 +33,9 @@ int main(int argc, char *argv[])
 
     int count = 0;
     int j = 0;
-
+    level = level - 1;
+    char str[256];
+    sprintf(str, "%d", level);
     if (pid % 2 == 0)
     {
 
@@ -56,7 +53,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                char *args[] = {"./child1", argv[1], argv[2], argv[3], NULL};
+                char *args[] = {"./child1", argv[1], argv[2], str, NULL};
                 execv("./child1", args);
             }
         }
@@ -77,7 +74,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                char *args[] = {"./child1", argv[1], argv[2], argv[3], NULL};
+                char *args[] = {"./child1", argv[1], argv[2], str, NULL};
                 execv("./child1", args);
             }
         }
@@ -97,16 +94,16 @@ int main(int argc, char *argv[])
         waitid(P_PID, arrayPID[i], &sig, WEXITED);
         int status = sig.si_status;
 
-        printf("PID : %d and Parent PID : %d\n",arrayPID[i],getpid());
-        printf("Exit status received from child no. %ld : %d\n", i+1, status);
+        printf("PID : %d and Parent PID : %d\n", arrayPID[i], getpid());
+        printf("Exit status received from child no. %ld : %d\n", i + 1, status);
     }
 
-    printf("Root pid : %d and Parent PID :%d\n",getpid(),getppid());
+    printf("Root pid : %d and Parent PID :%d\n", getpid(), getppid());
 
     siginfo_t sig;
-    waitid(P_PID, arrayPID[count-1], &sig, WEXITED);
+    waitid(P_PID, arrayPID[count - 1], &sig, WEXITED);
     int status = sig.si_status;
-    printf("PID : %d and Parent PID : %d\n",arrayPID[count-1],getpid());
+    printf("PID : %d and Parent PID : %d\n", arrayPID[count - 1], getpid());
     printf("Exit status received from child no. %d : %d\n", count, status);
 
     printf("~~~~~INORDER PRINTING ENDED~~~~~\n");
@@ -119,5 +116,4 @@ int main(int argc, char *argv[])
 
     // Closing the file descriptor of shared memory segment.
     close(shm_fd);
-
 }

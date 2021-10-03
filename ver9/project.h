@@ -8,7 +8,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <semaphore.h>
+#include <semaphore.h> /* for semaphores */ 
+#include <unistd.h> /* for fork() and execv */
+#include <sys/mman.h> /*Prot_READ*/
+#include <mqueue.h> /* "O_CREAT" O_Constants*/
+#include <wait.h> /* SIGCONT , SIGSTOP*/
 
 #define SHARED_MEMORY_NAME "/SYSSHAREDMEMORY"
 

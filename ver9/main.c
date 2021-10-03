@@ -2,11 +2,6 @@
 
 #include "project.h"
 
-#include <sys/mman.h> /*Prot_READ*/
-#include <mqueue.h> /* "O_CREAT" O_Constants*/
-
-
-
 int main(int argc, char *argv[])
 {
     shm_unlink(SHARED_MEMORY_NAME);
@@ -17,6 +12,16 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    // Taking all the argument values;
+    int even = atoi(argv[1]);
+    int odd = atoi(argv[2]);
+    int level = atoi(argv[3]);
+
+    if (even <= 0 || odd <= 0 || level <= 0)
+    {
+        printf("Please enter non-zero positive arguments \n");
+        return 0;
+    }
 
     // Creating shared memory segment
     int shm_fd = shm_open(SHARED_MEMORY_NAME, O_CREAT | O_RDWR | O_EXCL, 0666);
@@ -41,7 +46,6 @@ int main(int argc, char *argv[])
     sem = &ptr->semaphore;
     sem_init(sem, 1, 1);
 
-
     // starting our parent program, which starts the sequence.
     int pid = getpid();
 
@@ -57,9 +61,7 @@ int main(int argc, char *argv[])
         perror("Error in creating parent program \n");
     }
 
-
     wait(NULL);
-
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));
