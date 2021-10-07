@@ -1,6 +1,5 @@
 #include "project.h"
 
-
 struct shared_memory_structure *ptr;
 int shm_fd;
 int count = 0;
@@ -20,7 +19,6 @@ int main(int argc, char *argv[])
 
     // Mapping shared segment to process's virtual space.
     ptr = (struct shared_memory_structure *)mmap(0, sizeof(struct shared_memory_structure), PROT_WRITE | PROT_READ, MAP_SHARED, shm_fd, 0);
-
     if (ptr == MAP_FAILED)
     {
         perror("Mapping");
@@ -42,7 +40,6 @@ int main(int argc, char *argv[])
         // creating chidlren if PID even.
         if (getpid() % 2 == 0)
         {
-
             childCreation(even, level, arrayPID, argv);
         }
 
@@ -54,15 +51,16 @@ int main(int argc, char *argv[])
     }
     else
     {
-        raise(SIGSTOP);
+        // Leaves will execute this part of the code.
+        raise(SIGSTOP); // Sent the sigstop signal to self for the second time to get prepared for inorder.
         printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
         fflush(stdout);
         exit(0);
     }
 
-    raise(SIGSTOP);
+    raise(SIGSTOP); // Sent the sigstop signal to self for the second time to get prepared for inorder.
 
-    inorder(arrayPID);
+    inorder(arrayPID); // Started the inorder printing.
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));
@@ -73,35 +71,31 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
-int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
+void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 {
-
-
     level = level - 1;
     char str[256];
     sprintf(str, "%d", level);
-
-    // creating children
     int j = 0;
 
+    // creating children
     while (j < children)
     {
-
         pid_t childPid = fork();
         if (childPid != 0)
         {
-
             arrayPID[count++] = childPid;
 
-            // Critical Section
+            // Critical Section started.
             sem_wait(sem);
 
             ptr->a = ptr->a + 1;
 
             sem_post(sem);
+            // Critical Section ended.
 
             siginfo_t sig;
-            waitid(P_PID, childPid, &sig, WSTOPPED);
+            waitid(P_PID, childPid, &sig, WSTOPPED); // waiting for the child to stop for the first time.
 
             j++;
         }
@@ -114,12 +108,11 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
         else
         {
             perror("Child Creation");
-            return 1;
+            exit(6);
         }
     }
 
-    int check_first_time = 1;
-
+    // Critical Section started.
     sem_wait(sem);
 
     ptr->b = ptr->b - 1;
@@ -127,8 +120,9 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     if (ptr->b != 0)
     {
         sem_post(sem);
+        // Critical Section ended for if.
 
-        // Stopping all the next level children here.
+        // Making all next level children busy wait here.
         while (ptr->child_1_mode != 1)
         {
             usleep(50);
@@ -136,16 +130,18 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     }
     else
     {
+        // Last process of a level to finish its child creation work will execute this part of the code.
         ptr->b = ptr->a;
         ptr->a = 0;
-        ptr->child_2_mode = 0;
-        ptr->child_1_mode = 1;
+        ptr->child_2_mode = 0; // changing modes.
+        ptr->child_1_mode = 1; // changing modes.
         sem_post(sem);
+        // Critical Section ended for else.
     }
 
     for (size_t i = 0; i < count; i++)
     {
+        // Giving continue signal to its children.
         kill(arrayPID[i], SIGCONT);
     }
-    return level;
 }

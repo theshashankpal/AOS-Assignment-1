@@ -2,8 +2,8 @@
 // Created by shashank on 9/27/21.
 //
 
-#ifndef ASSIGNMENT_2_PROJECT_H
-#define ASSIGNMENT_2_PROJECT_H
+#ifndef ASSIGNMENT_H
+#define ASSIGNMENT_H
 
 
 #include <stdio.h>
@@ -26,7 +26,7 @@
 #define RESET "\x1B[0m"
 
 extern void inorder(pid_t[]);
-extern int childCreation(int, int, pid_t[], char *[]);
+extern void childCreation(int, int, pid_t[], char *[]);
 
 struct message_buffer
 {
@@ -48,4 +48,4 @@ extern int count ;
 extern sem_t *sem;
 
 
-#endif //ASSIGNMENT_2_PROJECT_H
+#endif //ASSIGNMENT_H

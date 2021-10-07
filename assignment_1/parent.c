@@ -3,15 +3,12 @@
 struct shared_memory_structure *ptr;
 int shm_fd;
 int count = 0;
-sem_t *sem;
 
 int main(int argc, char *argv[])
 {
 
-    struct shared_memory_structure *ptr;
-
     // Connecting to shared memory segment.
-    int shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0660);
+    shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0660);
     if (shm_fd == -1)
     {
         perror("Parent Shared Memory");
@@ -34,60 +31,13 @@ int main(int argc, char *argv[])
 
     pid_t arrayPID[even > odd ? even : odd];
 
-    level = level - 1;
-    char str[256];
-    sprintf(str, "%d", level);
-    int j = 0;
-
     if (getpid() % 2 == 0)
     {
-        while (j < even)
-        {
-            pid_t childPid = fork();
-            if (childPid != 0)
-            {
-                arrayPID[count++] = childPid;
-                ptr->b = ptr->b + 1;
-                siginfo_t sig;
-                waitid(P_PID, childPid, &sig, WSTOPPED);
-                j++;
-            }
-            else if (childPid == 0)
-            {
-                char *args[] = {"./child1", argv[1], argv[2], str, NULL};
-                execv("./child1", args);
-            }
-            else
-            {
-                perror("Root Creation");
-                return -1;
-            }
-        }
+        childCreation(even, level, arrayPID, argv);
     }
     else
     {
-        while (j < odd)
-        {
-            pid_t childPid = fork();
-            if (childPid != 0)
-            {
-                arrayPID[count++] = childPid;
-                ptr->b = ptr->b + 1;
-                siginfo_t sig;
-                waitid(P_PID, childPid, &sig, WSTOPPED);
-                j++;
-            }
-            else if (childPid == 0)
-            {
-                char *args[] = {"./child1", argv[1], argv[2], str, NULL};
-                execv("./child1", args);
-            }
-            else
-            {
-                perror("Root Creation");
-                return -1;
-            }
-        }
+        childCreation(odd, level, arrayPID, argv);
     }
 
     for (size_t i = 0; i < count; i++)
@@ -110,6 +60,35 @@ int main(int argc, char *argv[])
     close(shm_fd);
 }
 
+void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
+{
+    int j = 0;
+    level = level - 1;
+    char str[256];
+    sprintf(str, "%d", level);
+    while (j < children)
+    {
+        pid_t childPID = fork();
+        if (childPID != 0)
+        {
+            arrayPID[count++] = childPID;
+            ptr->b = ptr->b + 1;
+            siginfo_t sig;
+            waitid(P_PID, childPID, &sig, WSTOPPED);
+            j++;
+        }
+        else if (childPID == 0)
+        {
+            char *args[] = {"./child1", argv[1], argv[2], str, NULL};
+            execv("./child1", args);
+        }
+        else
+        {
+            perror("Root Creation");
+            exit (6);
+        }
+    }
+}
 
 void inorder(pid_t arrayPID[])
 {

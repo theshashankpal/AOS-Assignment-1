@@ -4,7 +4,6 @@ void inorder(pid_t arrayPID[])
 {
     for (size_t i = 0; i < count - 1; i++)
     {
-
         siginfo_t sig1;
         waitid(P_PID, arrayPID[i], &sig1, WSTOPPED);
 

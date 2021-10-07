@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        // Entered Leaf.
+        // Leaves will execute this part of the code.
         raise(SIGSTOP);
         printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
         fflush(stdout);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
-int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
+void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 {
 
     level = level - 1;
@@ -117,7 +117,7 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
         else
         {
             perror("Child Creation");
-            return 1;
+            exit(6);
         }
     }
 
@@ -153,5 +153,4 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     {
         kill(arrayPID[i], SIGCONT);
     }
-    return level;
 }
