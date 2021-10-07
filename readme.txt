@@ -81,5 +81,5 @@ BUGS :
 None (To my limited knowledge)
 
 If given more time , would've used pthread_barrier . As before I didn't know that we can use
-pthread_barrier for processes too by passing non-zero arguments.
+pthread_barrier for processes too by passing a non-zero argument.
 -----------------------------------------------------------------------------------------------------------------------
