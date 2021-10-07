@@ -1,6 +1,9 @@
 #include "project.h"
 
-void inorder(pid_t[], int, int);
+struct shared_memory_structure *ptr;
+int shm_fd;
+int count = 0;
+sem_t *sem;
 
 int main(int argc, char *argv[])
 {
@@ -57,7 +60,7 @@ int main(int argc, char *argv[])
             else
             {
                 perror("Root Creation");
-                return 1;
+                return -1;
             }
         }
     }
@@ -82,7 +85,7 @@ int main(int argc, char *argv[])
             else
             {
                 perror("Root Creation");
-                return 1;
+                return -1;
             }
         }
     }
@@ -95,7 +98,7 @@ int main(int argc, char *argv[])
     printf(CYN "~~~~~INORDER PRINTING GOING TO START~~~~~\n" RESET);
     fflush(stdout);
 
-    inorder(arrayPID, count, level);
+    inorder(arrayPID);
 
     printf(CYN "~~~~~~~~~~INORDER PRINTING ENDED~~~~~~~~~~\n" RESET);
     fflush(stdout);
@@ -107,7 +110,8 @@ int main(int argc, char *argv[])
     close(shm_fd);
 }
 
-void inorder(pid_t arrayPID[], int count, int level)
+
+void inorder(pid_t arrayPID[])
 {
     for (size_t i = 0; i < count - 1; i++)
     {

@@ -1,6 +1,11 @@
 
 #include "project.h"
 
+struct shared_memory_structure *ptr;
+int shm_fd;
+int count = 0;
+sem_t *sem;
+
 int main(int argc, char *argv[])
 {
     shm_unlink(SHARED_MEMORY_NAME);
@@ -42,7 +47,7 @@ int main(int argc, char *argv[])
     }
 
     // Initialization of a semaphore
-    sem = &ptr->semaphore;
+    sem = &(ptr->semaphore);
     sem_init(sem, 1, 1);
 
     // starting our parent program, which starts the sequence.

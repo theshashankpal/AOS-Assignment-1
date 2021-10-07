@@ -1,8 +1,10 @@
 #include "project.h"
 
-int childCreation(int, int, pid_t[], char *[]);
-void inorder(pid_t[], int, int);
 
+struct shared_memory_structure *ptr;
+int shm_fd;
+int count = 0;
+sem_t *sem;
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +62,7 @@ int main(int argc, char *argv[])
 
     raise(SIGSTOP);
 
-    inorder(arrayPID, count, level);
+    inorder(arrayPID);
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));

@@ -1,7 +1,10 @@
 #include "project.h"
 
-int childCreation(int, int, pid_t[], char *[]);
-void inorder(pid_t[], int, int);
+
+struct shared_memory_structure *ptr;
+int shm_fd;
+int count = 0;
+sem_t *sem;
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +27,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Connecting to semaphore
+    // Intializing Semaphore
     sem = &(ptr->semaphore);
 
 
@@ -52,15 +55,16 @@ int main(int argc, char *argv[])
     }
     else
     {
+        // Entered Leaf.
         raise(SIGSTOP);
         printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
         fflush(stdout);
         exit(0);
     }
 
-    raise(SIGSTOP);
+    raise(SIGSTOP); // Sent the sigstop signal to self for the second time to get prepared for inorder.
 
-    inorder(arrayPID, count, level);
+    inorder(arrayPID); // Started the inorder printing.
 
 
     // Unmapping the shared object from process's virtual space.

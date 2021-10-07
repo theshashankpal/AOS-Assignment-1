@@ -25,6 +25,8 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
+extern void inorder(pid_t[]);
+extern int childCreation(int, int, pid_t[], char *[]);
 
 struct message_buffer
 {
@@ -38,13 +40,12 @@ struct shared_memory_structure
     sem_t semaphore;
     int child_1_mode;
     int child_2_mode;
-
 };
 
-struct shared_memory_structure *ptr;
-int shm_fd;
-int count = 0;
-sem_t *sem;
+extern struct shared_memory_structure *ptr;
+extern int shm_fd;
+extern int count ;
+extern sem_t *sem;
 
 
 #endif //ASSIGNMENT_2_PROJECT_H
