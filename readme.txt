@@ -23,13 +23,14 @@ child2.c : And child1.c starts child2.c, therafter child2.c starts child1.c and 
             This keeps on repeating until leaf nodes are reached.
 
 inorder.c : Supplemntary file to child1.c and child2.c , houses code for inorder printing.
+            Inorder manner : First print (n-1) child then root then last child.
 
 project.h : Simple header file indicating what #includes are used,
              what functions and custom data structures that I'm using.
 -----------------------------------------------------------------------------------------------------------------------
 HOW TO COMPILE :
 
-First run : make clean (to remove and unnecessary object files)
+First run : make clean (to remove any unnecessary object and executable files)
 Then run : make
 -----------------------------------------------------------------------------------------------------------------------
 HOW TO RUN :
@@ -51,7 +52,6 @@ Description Of The Structure Of My Program :
     (I've used named Shared Memory and anonymous Semaphore from POSIX interface.)
 
 - Parent.c will link itself to the shared memory and semaphore.
-    And will then store arguments from command line argument into some local variables.
     Depending on the level variable passed it will either call child1.c or not.
     After completing previous step will initiate inorder printing.
     After finishing inorder printing, it will remove the file descriptor of shared memory.
@@ -80,6 +80,6 @@ Description Of The Structure Of My Program :
 BUGS :
 None (To my limited knowledge)
 
-If given more time , would've used pthread_barrier . As before I didn't know that we can use
-pthread_barrier for processes too by passing a non-zero argument.
+If given more time , would've used pthread_barrier insteaf of this messy alternative level approach . 
+As before I didn't know that we can use pthread_barrier for processes too by passing a non-zero argument.
 -----------------------------------------------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Intializing Semaphore
+    // Connecting to semaphore
     sem = &(ptr->semaphore);
 
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     else
     {
         // Leaves will execute this part of the code.
-        raise(SIGSTOP);
+        raise(SIGSTOP);// Sent the sigstop signal to self for the second time to get prepared for inorder.
         printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
         fflush(stdout);
         exit(0);
@@ -100,9 +100,10 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
             // Critical Section
             sem_wait(sem);
 
-            ptr->a = ptr->a + 1;
+            ptr->a = ptr->a + 1; // Incrementing to record chidlren of next level.
 
             sem_post(sem);
+            // Critical Section ended.
 
             siginfo_t sig;
             waitid(P_PID, childPid, &sig, WSTOPPED);
@@ -125,6 +126,7 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 
     int check_first_time = 1;
 
+    // Critical Section started.
     sem_wait(sem);
 
     ptr->b = ptr->b - 1;
@@ -132,8 +134,9 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     if (ptr->b != 0)
     {
         sem_post(sem);
+        // Critical Section ended for if.
 
-        // Stopping all the next level children here.
+        // Making all next level children busy wait here.
         while (ptr->child_2_mode != 1)
         {
             usleep(50);
@@ -141,17 +144,19 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     }
     else
     {
-        ptr->b = ptr->a;
+        // Last process of a level to finish its child creation work will execute this part of the code.
+        ptr->b = ptr->a; // making it ready for next level
         ptr->a = 0;
-        ptr->child_1_mode = 0;
-        ptr->child_2_mode = 1;
+        ptr->child_1_mode = 0; // changing modes
+        ptr->child_2_mode = 1; // changing modes
         sem_post(sem);
-
+        // Critical Section ended for else.
     }
 
 
     for (size_t i = 0; i < count; i++)
     {
+        // Giving continue signal to its children.
         kill(arrayPID[i], SIGCONT);
     }
 }

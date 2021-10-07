@@ -39,11 +39,11 @@ struct message_buffer
 
 struct shared_memory_structure
 {
-    int a;
-    int b;
+    int a; // Used to count next level children
+    int b; // Used to keep track whether current level processes have finished their work or not
     sem_t semaphore;
-    int child_1_mode;
-    int child_2_mode;
+    int child_1_mode; // Stops processes created by child1.c if its zero (Barrier)
+    int child_2_mode; // Stops processes created by child2.c if its zero (Barrier)
 };
 
 extern struct shared_memory_structure *ptr;

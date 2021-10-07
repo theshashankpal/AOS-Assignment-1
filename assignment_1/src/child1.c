@@ -90,7 +90,7 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
             // Critical Section started.
             sem_wait(sem);
 
-            ptr->a = ptr->a + 1;
+            ptr->a = ptr->a + 1; // Incrementing to record chidlren of next level.
 
             sem_post(sem);
             // Critical Section ended.
@@ -116,7 +116,7 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     // Critical Section started.
     sem_wait(sem);
 
-    ptr->b = ptr->b - 1;
+    ptr->b = ptr->b - 1; // using to synchronize betweem same level processes.
 
     if (ptr->b != 0)
     {
@@ -132,8 +132,8 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
     else
     {
         // Last process of a level to finish its child creation work will execute this part of the code.
-        ptr->b = ptr->a;
-        ptr->a = 0;
+        ptr->b = ptr->a; // making it ready for next level
+        ptr->a = 0; 
         ptr->child_2_mode = 0; // changing modes.
         ptr->child_1_mode = 1; // changing modes.
         sem_post(sem);
