@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
     close(shm_fd);
 }
 
+// Will fork children and then immediately execv them.
 void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 {
     int j = 0;

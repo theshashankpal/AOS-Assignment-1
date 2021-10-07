@@ -25,7 +25,11 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
+
+// Prints inorder
 extern void inorder(pid_t[]);
+
+// Creates children based on the value of arguments passed to it.
 extern void childCreation(int, int, pid_t[], char *[]);
 
 struct message_buffer

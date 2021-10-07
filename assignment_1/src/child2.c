@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
+// Will fork children and then immediately execv them.
 void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 {
 
