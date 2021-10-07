@@ -1,10 +1,15 @@
 
-
 #include "project.h"
+
+struct shared_memory_structure *ptr;
+int shm_fd;
+sem_t *sem;
 
 int main(int argc, char *argv[])
 {
+    // Unlinking shared memory if somehow previous runs were not successfull.
     shm_unlink(SHARED_MEMORY_NAME);
+    
     // Checking if arguments entered is too few or too many.
     if (argc != 4)
     {
@@ -17,38 +22,42 @@ int main(int argc, char *argv[])
     int odd = atoi(argv[2]);
     int level = atoi(argv[3]);
 
-    if (even <= 0 || odd <= 0 || level <= 0)
+    // Checking if arguments passed are positive or not.
+    if (even <= 0 || odd <= 0)
     {
-        printf("Please enter non-zero positive arguments \n");
-        return 0;
+        printf("Please enter non-zero positive arguments for no. of children that are needed to be made \n");
+        exit (1);
+    }
+
+    if(level<0)
+    {
+        printf("Please enter non-negative argument for number of levels\n");
     }
 
     // Creating shared memory segment
-    int shm_fd = shm_open(SHARED_MEMORY_NAME, O_CREAT | O_RDWR | O_EXCL, 0666);
+    shm_fd = shm_open(SHARED_MEMORY_NAME, O_CREAT | O_RDWR | O_EXCL, 0660);
     if (shm_fd == -1)
     {
         perror("Main Shared Memory");
         exit(4);
     }
 
-    // allocating space for our defined struct in shared memory.
+    // Allocating space for our defined struct in shared memory.
     ftruncate(shm_fd, sizeof(struct shared_memory_structure));
 
-    // mapping it to this process's virtual space.
+    // Mapping it to this process's virtual space.
     ptr = (struct shared_memory_structure *)mmap(NULL, sizeof(struct shared_memory_structure), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if (ptr == MAP_FAILED)
     {
-        perror("Mapping");
-        return 0;
+        perror("Main Mapping");
+        exit(2);
     }
 
     // Initialization of a semaphore
-    sem = &ptr->semaphore;
+    sem = &(ptr->semaphore);
     sem_init(sem, 1, 1);
 
-    // starting our parent program, which starts the sequence.
-    int pid = getpid();
-
+    // starting our root program, which starts the sequence.
     pid_t programmePID = fork();
 
     if (programmePID == 0)
@@ -61,7 +70,9 @@ int main(int argc, char *argv[])
         perror("Error in creating parent program \n");
     }
 
-    wait(NULL);
+    wait(NULL); // waiting for root to finish.
+
+    fflush(stdout);
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));

@@ -2,8 +2,8 @@
 // Created by shashank on 9/27/21.
 //
 
-#ifndef ASSIGNMENT_2_PROJECT_H
-#define ASSIGNMENT_2_PROJECT_H
+#ifndef ASSIGNMENT_H
+#define ASSIGNMENT_H
 
 
 #include <stdio.h>
@@ -25,6 +25,13 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
+
+// Prints inorder
+extern void inorder(pid_t[]);
+
+// Creates children based on the value of arguments passed to it.
+extern void childCreation(int, int, pid_t[], char *[]);
+
 struct message_buffer
 {
     pid_t pid;
@@ -32,18 +39,17 @@ struct message_buffer
 
 struct shared_memory_structure
 {
-    int a;
-    int b;
+    int a; // Used to count next level children
+    int b; // Used to keep track whether current level processes have finished their work or not
     sem_t semaphore;
-    int child_1_mode;
-    int child_2_mode;
-
+    int child_1_mode; // Stops processes created by child1.c if its zero (Barrier)
+    int child_2_mode; // Stops processes created by child2.c if its zero (Barrier)
 };
 
-struct shared_memory_structure *ptr;
-int shm_fd;
-int count = 0;
-sem_t *sem;
+extern struct shared_memory_structure *ptr;
+extern int shm_fd;
+extern int count ;
+extern sem_t *sem;
 
 
-#endif //ASSIGNMENT_2_PROJECT_H
+#endif //ASSIGNMENT_H
