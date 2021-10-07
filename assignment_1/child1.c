@@ -3,9 +3,10 @@
 int childCreation(int, int, pid_t[], char *[]);
 void inorder(pid_t[], int, int);
 
+
 int main(int argc, char *argv[])
 {
-    kill(getpid(), SIGSTOP);
+    raise(SIGSTOP);
 
     // Connecting to shared memory segment.
     shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0660);
@@ -51,13 +52,13 @@ int main(int argc, char *argv[])
     }
     else
     {
-        kill(getpid(), SIGSTOP);
+        raise(SIGSTOP);
         printf(GRN "Leaf PID : %d and Parent PID : %d\n" RESET, getpid(), getppid());
         fflush(stdout);
         exit(0);
     }
 
-    kill(getpid(), SIGSTOP);
+    raise(SIGSTOP);
 
     inorder(arrayPID, count, level);
 
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
 
 int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
 {
+
 
     level = level - 1;
     char str[256];
@@ -127,7 +129,7 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
         // Stopping all the next level children here.
         while (ptr->child_1_mode != 1)
         {
-            usleep(500);
+            usleep(50);
         }
     }
     else
@@ -144,34 +146,4 @@ int childCreation(int children, int level, pid_t arrayPID[], char *argv[])
         kill(arrayPID[i], SIGCONT);
     }
     return level;
-}
-
-void inorder(pid_t arrayPID[], int count, int level)
-{
-    for (size_t i = 0; i < count - 1; i++)
-    {
-
-        siginfo_t sig1;
-        waitid(P_PID, arrayPID[i], &sig1, WSTOPPED);
-
-        kill(arrayPID[i], SIGCONT);
-
-        siginfo_t sig;
-        waitid(P_PID, arrayPID[i], &sig, WEXITED);
-        int status = sig.si_status;
-        printf("Exit status received from child no. : %ld whose PID : %d is : %d\n", i + 1,arrayPID[i], status);
-    }
-
-    printf(MAG "Internal node pid : %d and Parent PID : %d\n" RESET , getpid(), getppid());
-    fflush(stdout);
-
-    siginfo_t sig1;
-    waitid(P_PID, arrayPID[count-1], &sig1, WSTOPPED);
-
-    kill(arrayPID[count-1], SIGCONT);
-
-    siginfo_t sig;
-    waitid(P_PID, arrayPID[count-1], &sig, WEXITED);
-    int status = sig.si_status;
-    printf("Exit status received from child no. : %d whose PID : %d is : %d\n", count,arrayPID[count-1], status);
 }

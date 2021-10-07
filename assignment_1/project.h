@@ -25,6 +25,7 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
+
 struct message_buffer
 {
     pid_t pid;

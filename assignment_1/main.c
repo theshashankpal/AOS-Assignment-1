@@ -1,5 +1,4 @@
 
-
 #include "project.h"
 
 int main(int argc, char *argv[])
@@ -62,6 +61,8 @@ int main(int argc, char *argv[])
     }
 
     wait(NULL);
+
+    fflush(stdout);
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));
