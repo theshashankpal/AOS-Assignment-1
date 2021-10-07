@@ -31,27 +31,39 @@ int main(int argc, char *argv[])
 
     pid_t arrayPID[even > odd ? even : odd];
 
-    if (getpid() % 2 == 0)
+    if (level == 0)
     {
-        childCreation(even, level, arrayPID, argv);
+        printf(CYN "~~~~~INORDER PRINTING GOING TO START~~~~~\n" RESET);
+        fflush(stdout);
+        printf(RED "Root node pid : %d and Parent PID : %d\n" RESET, getpid(), getppid());
+        fflush(stdout);
+        printf(CYN "~~~~~~~~~~INORDER PRINTING ENDED~~~~~~~~~~\n" RESET);
+        fflush(stdout);
     }
     else
     {
-        childCreation(odd, level, arrayPID, argv);
+        if (getpid() % 2 == 0)
+        {
+            childCreation(even, level, arrayPID, argv);
+        }
+        else
+        {
+            childCreation(odd, level, arrayPID, argv);
+        }
+
+        for (size_t i = 0; i < count; i++)
+        {
+            kill(arrayPID[i], SIGCONT);
+        }
+
+        printf(CYN "~~~~~INORDER PRINTING GOING TO START~~~~~\n" RESET);
+        fflush(stdout);
+
+        inorder(arrayPID);
+
+        printf(CYN "~~~~~~~~~~INORDER PRINTING ENDED~~~~~~~~~~\n" RESET);
+        fflush(stdout);
     }
-
-    for (size_t i = 0; i < count; i++)
-    {
-        kill(arrayPID[i], SIGCONT);
-    }
-
-    printf(CYN "~~~~~INORDER PRINTING GOING TO START~~~~~\n" RESET);
-    fflush(stdout);
-
-    inorder(arrayPID);
-
-    printf(CYN "~~~~~~~~~~INORDER PRINTING ENDED~~~~~~~~~~\n" RESET);
-    fflush(stdout);
 
     // Unmapping the shared object from process's virtual space.
     munmap(ptr, sizeof(sizeof(struct shared_memory_structure)));
@@ -85,7 +97,7 @@ void childCreation(int children, int level, pid_t arrayPID[], char *argv[])
         else
         {
             perror("Root Creation");
-            exit (6);
+            exit(6);
         }
     }
 }

@@ -23,10 +23,15 @@ int main(int argc, char *argv[])
     int level = atoi(argv[3]);
 
     // Checking if arguments passed are positive or not.
-    if (even <= 0 || odd <= 0 || level <= 0)
+    if (even <= 0 || odd <= 0)
     {
-        printf("Please enter non-zero positive arguments \n");
+        printf("Please enter non-zero positive arguments for no. of children that are needed to be made \n");
         exit (1);
+    }
+
+    if(level<0)
+    {
+        printf("Please enter non-negative argument for number of levels\n");
     }
 
     // Creating shared memory segment
