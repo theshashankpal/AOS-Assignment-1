@@ -30,12 +30,14 @@ project.h : Simple header file indicating what #includes are used,
 -----------------------------------------------------------------------------------------------------------------------
 HOW TO COMPILE :
 
-First run : make clean (to remove any unnecessary object and executable files)
-Then run : make
+First : cd/assignment_1
+Then run : make clean (to remove any unnecessary object and executable files)
+Lastly run : make
 -----------------------------------------------------------------------------------------------------------------------
 HOW TO RUN :
 
-To run program, type following with required amount of arguments : ./output (even) (odd) (level)
+First make sure you're in /assignment_1 directory.
+Then to run program, type following with required amount of arguments : ./output (even) (odd) (level)
 
 For ex : ./output 2 3 3
 
@@ -80,6 +82,6 @@ Description Of The Structure Of My Program :
 BUGS :
 None (To my limited knowledge)
 
-If given more time , would've used pthread_barrier insteaf of this messy alternative level approach . 
+If given more time , would've used pthread_barrier instead of this messy alternative level approach . 
 As before I didn't know that we can use pthread_barrier for processes too by passing a non-zero argument.
 -----------------------------------------------------------------------------------------------------------------------
