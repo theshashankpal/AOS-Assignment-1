@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     if(level<0)
     {
         printf("Please enter non-negative argument for number of levels\n");
+        exit(1);
     }
 
     // Creating shared memory segment
